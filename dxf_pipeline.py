@@ -240,8 +240,8 @@ def render_with_pymupdf(
         background_policy=drawing_config.BackgroundPolicy.WHITE,
     )
     recorder = pymupdf.PyMuPdfBackend()
-    ctx = RenderContext(doc, config=config)
-    Frontend(ctx, recorder).draw_layout(msp, finalize=True)
+    ctx = RenderContext(doc)
+    Frontend(ctx, recorder, config=config).draw_layout(msp, finalize=True)
     render = recorder.get_replay(page_def, settings=settings)
     render.set_background("#FFFFFF")
 
@@ -348,8 +348,8 @@ def export_flattened_dxf(doc: Drawing, msp: Modelspace, outdir: Path) -> None:
         background_policy=drawing_config.BackgroundPolicy.WHITE,
     )
     backend = dxf_backend.DXFBackend(out_msp, color_mode=dxf_backend.ColorMode.RGB)
-    ctx = RenderContext(doc, config=config)
-    Frontend(ctx, backend).draw_layout(msp, finalize=True)
+    ctx = RenderContext(doc)
+    Frontend(ctx, backend, config=config).draw_layout(msp, finalize=True)
     flat_path = outdir / "flattened.dxf"
     out_doc.saveas(flat_path)
     LOGGER.info("DXF flattened salvo em %s", flat_path)
@@ -411,16 +411,24 @@ def parse_args(argv: Optional[Iterable[str]] = None) -> argparse.Namespace:
     parser.add_argument("--input", type=Path, default=DEFAULT_INPUT, help="Arquivo DXF de entrada.")
     parser.add_argument("--outdir", type=Path, default=Path("out"), help="Diretório de saída.")
     parser.add_argument("--label", type=str, default=None, help="Rótulo/nome para compor o diretório de saída.")
+    parser.add_argument("--no-label", dest="label", action="store_const", const=None, help="Não usar rótulo (override).")
     parser.add_argument(
         "--timestamped-outdir",
         action="store_true",
         help="Anexa timestamp (YYYYmmdd_HHMMSS) ao diretório de saída.",
+    )
+    parser.add_argument(
+        "--no-timestamped-outdir",
+        action="store_false",
+        dest="timestamped_outdir",
+        help="Não anexar timestamp ao diretório de saída.",
     )
     parser.add_argument("--pdf", dest="pdf", action="store_true", help="Exportar PDF.")
     parser.add_argument("--no-pdf", dest="pdf", action="store_false", help="Não exportar PDF.")
     parser.add_argument("--png", dest="png", action="store_true", help="Exportar PNG.")
     parser.add_argument("--no-png", dest="png", action="store_false", help="Não exportar PNG.")
     parser.add_argument("--svg", dest="svg", action="store_true", help="Exportar SVG.")
+    parser.add_argument("--no-svg", dest="svg", action="store_false", help="Não exportar SVG.")
     parser.add_argument("--dpi", type=int, default=300, help="DPI para PNG/PDF (default: 300).")
     parser.add_argument("--page", choices=list(ISO_SIZES_MM.keys()), default="A3", help="Tamanho da página.")
     parser.add_argument(

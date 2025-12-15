@@ -47,6 +47,7 @@ Saídas (padrão em `./out`):
 - `--set-insunits <int>` (grava cópia com $INSUNITS ajustado)
 - `--label <nome>` (rótulo para compor o diretório de saída)
 - `--timestamped-outdir` (anexa `YYYYmmdd_HHMMSS` ao diretório de saída)
+- Flags rápidas para desativar: `--no-label`, `--no-timestamped-outdir`, `--no-pdf`, `--no-png`, `--no-svg`
 
 Exemplos:
 ```bash
