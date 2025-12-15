@@ -1,0 +1,5 @@
+ezdxf>=1.4
+pymupdf>=1.24
+matplotlib>=3.8
+pillow>=10.0
+rich>=13.0
