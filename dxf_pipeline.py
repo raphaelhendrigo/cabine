@@ -13,6 +13,7 @@ import json
 import logging
 import subprocess
 import sys
+from datetime import datetime
 from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
@@ -409,6 +410,12 @@ def parse_args(argv: Optional[Iterable[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Pipeline de análise e exportação de DXF.")
     parser.add_argument("--input", type=Path, default=DEFAULT_INPUT, help="Arquivo DXF de entrada.")
     parser.add_argument("--outdir", type=Path, default=Path("out"), help="Diretório de saída.")
+    parser.add_argument("--label", type=str, default=None, help="Rótulo/nome para compor o diretório de saída.")
+    parser.add_argument(
+        "--timestamped-outdir",
+        action="store_true",
+        help="Anexa timestamp (YYYYmmdd_HHMMSS) ao diretório de saída.",
+    )
     parser.add_argument("--pdf", dest="pdf", action="store_true", help="Exportar PDF.")
     parser.add_argument("--no-pdf", dest="pdf", action="store_false", help="Não exportar PDF.")
     parser.add_argument("--png", dest="png", action="store_true", help="Exportar PNG.")
@@ -464,7 +471,12 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
         LOGGER.error("Arquivo de entrada não encontrado: %s", input_path)
         return 1
     outdir = args.outdir
+    if args.label:
+        outdir = outdir / args.label
+    if args.timestamped_outdir:
+        outdir = outdir / datetime.now().strftime("%Y%m%d_%H%M%S")
     outdir.mkdir(parents=True, exist_ok=True)
+    LOGGER.info("Usando diretório de saída: %s", outdir)
 
     doc, _ = load_doc(input_path)
     stats = compute_stats(doc)

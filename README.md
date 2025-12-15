@@ -45,6 +45,8 @@ Saídas (padrão em `./out`):
 - `--export-flattened-dxf / --no-export-flattened-dxf` (default: on)
 - `--export-dwg` (tenta usar ODA)
 - `--set-insunits <int>` (grava cópia com $INSUNITS ajustado)
+- `--label <nome>` (rótulo para compor o diretório de saída)
+- `--timestamped-outdir` (anexa `YYYYmmdd_HHMMSS` ao diretório de saída)
 
 Exemplos:
 ```bash
@@ -56,6 +58,9 @@ python3 dxf_pipeline.py --set-insunits 4 --outdir "./out/mm_fix"
 
 # Forçar escala 1:100 em A1 paisagem, sem fit automático
 python3 dxf_pipeline.py --scale 0.01 --page A1 --orientation landscape --no-fit-page
+
+# Gerar saídas com carimbo de data/hora e rótulo
+python3 dxf_pipeline.py --label "versao_teste" --timestamped-outdir
 ```
 
 ## ODA File Converter (opcional, para DWG)
